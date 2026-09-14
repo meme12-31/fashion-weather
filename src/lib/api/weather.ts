@@ -141,7 +141,7 @@ export function createFallbackWeather(
       time: slot.toISOString(),
       temperature: baseTemp,
       weatherCode: 2,
-      precipitationProbability: 20,
+      precipitationProbability: 0,
       precipitation: 0,
     };
   });
@@ -152,8 +152,8 @@ export function createFallbackWeather(
     currentTemperature: baseTemp,
     maxTemperature: 22,
     minTemperature: 15,
-    currentWeatherCode: 2,
-    currentPrecipitationProbability: 20,
+    currentWeatherCode: 0,
+    currentPrecipitationProbability: 0,
     hourly,
   };
 }
@@ -198,8 +198,9 @@ export async function fetchWeather(
     time,
     temperature: data.hourly!.temperature_2m[index],
     weatherCode: data.hourly!.weather_code[index],
-    precipitationProbability:
+    precipitationProbability: Math.round(
       data.hourly!.precipitation_probability[index] ?? 0,
+    ),
     precipitation: data.hourly!.precipitation[index] ?? 0,
   }));
 
@@ -209,6 +210,25 @@ export async function fetchWeather(
     hourly = mappedHourly.slice(0, 24);
   }
 
+  let currentPrecipitationProbability = normalizePrecipitationProbability(
+    data.current.precipitation_probability,
+  );
+
+  if (
+    currentPrecipitationProbability === 0 &&
+    hourly.length > 0 &&
+    data.current.precipitation_probability == null
+  ) {
+    const now = new Date();
+    const currentHour = now.getHours();
+    const matchedHour = hourly.find(
+      (item) => new Date(item.time).getHours() === currentHour,
+    );
+    if (matchedHour) {
+      currentPrecipitationProbability = matchedHour.precipitationProbability;
+    }
+  }
+
   return {
     latitude: data.latitude,
     longitude: data.longitude,
@@ -216,10 +236,18 @@ export async function fetchWeather(
     maxTemperature: Math.round(data.daily.temperature_2m_max[0]),
     minTemperature: Math.round(data.daily.temperature_2m_min[0]),
     currentWeatherCode: data.current.weather_code,
-    currentPrecipitationProbability:
-      data.current.precipitation_probability ?? 0,
+    currentPrecipitationProbability,
     hourly,
   };
+}
+
+function normalizePrecipitationProbability(
+  value: number | undefined | null,
+): number {
+  if (value == null || Number.isNaN(value)) {
+    return 0;
+  }
+  return Math.max(0, Math.round(value));
 }
 
 export async function searchLocations(

@@ -272,20 +272,44 @@ function getSituationAdvice(
   }
 }
 
-function isRainExpected(weather: WeatherData): boolean {
-  const maxProb = Math.max(
-    weather.currentPrecipitationProbability,
-    ...weather.hourly.map((h) => h.precipitationProbability),
-  );
-  const maxPrecip = Math.max(
-    0,
-    ...weather.hourly.map((h) => h.precipitation),
-  );
-  const hasRainCode =
-    weather.currentWeatherCode >= 51 ||
-    weather.hourly.some((h) => h.weatherCode >= 51 && h.weatherCode <= 67);
+/** この値未満なら雨関連の持ち物アドバイスは出さない（0〜29%） */
+const RAIN_ADVICE_MIN_PROBABILITY = 30;
 
-  return maxProb >= 40 || maxPrecip >= 0.1 || hasRainCode;
+const RAIN_ADVICE_TEXT_PATTERN = /傘|濡れ|防水|雨具|レイン/i;
+
+function normalizePrecipitationProbability(value: number | undefined): number {
+  if (value === undefined || Number.isNaN(value)) {
+    return 0;
+  }
+  return Math.max(0, Math.round(value));
+}
+
+/** 持ち物アドバイス判定はUI表示と同じ「現在の降水確率」を使用 */
+function getCurrentPrecipitationProbability(weather: WeatherData): number {
+  return normalizePrecipitationProbability(
+    weather.currentPrecipitationProbability,
+  );
+}
+
+function isRainRelatedAdvice(advice: OutfitItemAdvice): boolean {
+  if (advice.icon === "🌂") {
+    return true;
+  }
+  return RAIN_ADVICE_TEXT_PATTERN.test(advice.text);
+}
+
+function filterRainRelatedAdvices(
+  advices: OutfitItemAdvice[],
+  currentRainProb: number,
+): OutfitItemAdvice[] {
+  if (currentRainProb >= RAIN_ADVICE_MIN_PROBABILITY) {
+    return advices;
+  }
+  return advices.filter((item) => !isRainRelatedAdvice(item));
+}
+
+function shouldShowRainItemAdvice(currentRainProb: number): boolean {
+  return currentRainProb >= RAIN_ADVICE_MIN_PROBABILITY;
 }
 
 function isSunnyOrClear(weather: WeatherData): boolean {
@@ -295,16 +319,44 @@ function isSunnyOrClear(weather: WeatherData): boolean {
   );
 }
 
+function appendClearWeatherAdvices(
+  advices: OutfitItemAdvice[],
+  weather: WeatherData,
+  sunny: boolean,
+): void {
+  const uvThreshold = sunny ? 15 : 18;
+
+  if (sunny && weather.maxTemperature >= uvThreshold) {
+    advices.push({
+      icon: "🕶️",
+      text: "サングラス・UV対策推奨",
+    });
+  }
+
+  if (weather.maxTemperature >= 28) {
+    advices.push({
+      icon: "💧",
+      text: "熱中症対策（水分・帽子）",
+    });
+  } else if (sunny && weather.maxTemperature >= 24) {
+    advices.push({
+      icon: "🧢",
+      text: "日差しが強い日は帽子もあると安心",
+    });
+  }
+}
+
 function getItemAdvices(
   weather: WeatherData,
   situation: Situation,
   gapFlag: boolean,
 ): OutfitItemAdvice[] {
   const advices: OutfitItemAdvice[] = [];
-  const rainExpected = isRainExpected(weather);
+  const currentRainProb = getCurrentPrecipitationProbability(weather);
+  const showRainAdvice = shouldShowRainItemAdvice(currentRainProb);
   const sunny = isSunnyOrClear(weather);
 
-  if (rainExpected) {
+  if (showRainAdvice) {
     advices.push({
       icon: "🌂",
       text: "折りたたみ傘があると安心",
@@ -315,6 +367,8 @@ function getItemAdvices(
         text: "濡れても良い靴推奨",
       });
     }
+  } else {
+    appendClearWeatherAdvices(advices, weather, sunny);
   }
 
   if (gapFlag) {
@@ -324,20 +378,8 @@ function getItemAdvices(
     });
   }
 
-  if (sunny && weather.maxTemperature >= 20) {
-    advices.push({
-      icon: "🕶️",
-      text: "サングラス・UV対策推奨",
-    });
-  } else if (!rainExpected && weather.maxTemperature >= 24 && sunny) {
-    advices.push({
-      icon: "🕶️",
-      text: "日差しが強い日はUVケアを",
-    });
-  }
-
   if (
-    !rainExpected &&
+    !showRainAdvice &&
     !gapFlag &&
     weather.maxTemperature >= 16 &&
     weather.maxTemperature < 22
@@ -348,7 +390,7 @@ function getItemAdvices(
     });
   }
 
-  return advices;
+  return filterRainRelatedAdvices(advices, currentRainProb);
 }
 
 export function getMainOutfitSuggestion(
