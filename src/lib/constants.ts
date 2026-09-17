@@ -21,6 +21,9 @@ export const SITUATIONS: {
   { id: "relax", label: "休日・リラックス", emoji: "🏠" },
 ];
 
+export const GA_MEASUREMENT_ID =
+  process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID ?? "G-KXFP18WL67";
+
 export const ADSENSE_CLIENT_ID =
   process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID ?? "";
 
