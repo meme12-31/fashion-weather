@@ -2,8 +2,6 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { RefreshCw } from "lucide-react";
-import { ArticlesColumnBanner } from "./articles/ArticlesColumnBanner";
-import { AdBanner } from "./AdBanner";
 import { Header } from "./Header";
 import { LoadingSpinner } from "./LoadingSpinner";
 import { LocationModal } from "./LocationModal";
@@ -36,7 +34,7 @@ type GeolocationStatus = "pending" | "granted" | "denied" | "unsupported";
 
 const GEO_INIT_TIMEOUT_MS = 12000;
 
-export function HomePage() {
+export function FashionWeatherClient() {
   const [location, setLocation] = useState<Location>(
     () => loadSettings().selectedLocation,
   );
@@ -179,7 +177,7 @@ export function HomePage() {
   const timeAdvices = weather ? getTimeSlotAdvices(weather) : [];
 
   return (
-    <div id="page-top" className="min-h-screen scroll-mt-0 bg-background pb-4">
+    <div id="page-top" className="scroll-mt-0">
       <Header
         location={location}
         onChangeLocation={() => setIsModalOpen(true)}
@@ -220,15 +218,8 @@ export function HomePage() {
           <MainOutfitCard weather={weather} suggestion={suggestion} />
           <Timeline slots={timelineSlots} />
           <TemperatureAdvice advices={timeAdvices} />
-          <div className="mx-4 mt-8 border-t border-accent-blue/25 pt-6">
-            <ArticlesColumnBanner embedded />
-          </div>
         </>
       )}
-
-      {(isLoading || !weather || !suggestion) && <ArticlesColumnBanner />}
-
-      <AdBanner />
 
       <LocationModal
         isOpen={isModalOpen}

@@ -16,8 +16,9 @@ export function Header({ location, onChangeLocation }: HeaderProps) {
               <Shirt className="h-5 w-5 text-foreground" />
             </div>
             <div className="min-w-0">
-              <h1 className="text-base font-bold leading-tight">
+              <h1 className="text-base font-bold leading-tight text-foreground">
                 今日の服装ナビ
+                <span className="sr-only">｜天気に合わせた服装提案</span>
               </h1>
               <p className="flex items-center gap-1 truncate text-xs text-muted">
                 <MapPin className="h-3 w-3 shrink-0" />

@@ -16,6 +16,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://hit-tool.com"),
   title: "今日の服装ナビ | 天気に合わせた服装提案",
   description:
     "毎日の天気情報とシチュエーションに合わせた服装提案。通勤・デート・アクティブなど用途別におすすめコーデをご提案します。",
