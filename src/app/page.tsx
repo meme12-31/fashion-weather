@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { AdBanner } from "@/components/AdBanner";
 import { FashionWeatherClient } from "@/components/FashionWeatherClient";
 import { ArticlesColumnBanner } from "@/components/articles/ArticlesColumnBanner";
+import { getAllArticles } from "@/lib/data/articles";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://hit-tool.com"),
@@ -38,6 +40,8 @@ export const metadata: Metadata = {
 };
 
 export default function Home() {
+  const articles = getAllArticles();
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
@@ -76,6 +80,22 @@ export default function Home() {
 
       {/* 広告枠 */}
       <AdBanner />
+
+      {/* お役立ちコラム一覧（全10本）SEO用静的セクション */}
+      <section className="sr-only" aria-label="お役立ちコラム一覧">
+        <h2>お役立ちコラム一覧（全10本）</h2>
+        <ul>
+          {articles.map((article) => (
+            <li key={article.slug}>
+              <Link href={`/articles/${article.slug}`}>
+                <h3>{article.title}</h3>
+                <p>{article.summary}</p>
+                <span>{article.tag}</span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </section>
     </main>
   );
 }
