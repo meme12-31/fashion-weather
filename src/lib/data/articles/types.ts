@@ -17,4 +17,7 @@ export interface Article {
   tag: string;
   summary: string;
   sections: ArticleSection[];
+  datePublished?: string;
+  dateModified?: string;
+  image?: string;
 }

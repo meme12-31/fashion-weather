@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { ChevronLeft } from "lucide-react";
 import { ArticleBody } from "@/components/articles/ArticleBody";
 import { ArticleIcon } from "@/components/articles/ArticleIcon";
+import { ArticleJsonLd } from "@/components/articles/ArticleJsonLd";
 import { ArticleTableOfContents } from "@/components/articles/ArticleTableOfContents";
 import { BackToHomeButton } from "@/components/articles/BackToHomeButton";
 import {
@@ -25,11 +26,37 @@ export async function generateMetadata({
   const { slug } = await params;
   const article = getArticleBySlug(slug);
   if (!article) {
-    return { title: "記事が見つかりません | 今日の服装ナビ" };
+    return { title: "記事が見つかりません | 服装ナビ" };
   }
+  const canonicalPath = `/fashion-weather/articles/${slug}`;
   return {
-    title: `${article.title} | 今日の服装ナビ`,
+    title: `${article.title} | 服装ナビ`,
     description: article.summary,
+    alternates: {
+      canonical: canonicalPath,
+    },
+    openGraph: {
+      title: `${article.title} | 服装ナビ`,
+      description: article.summary,
+      url: `https://hit-tool.com${canonicalPath}`,
+      siteName: "hit-tool.com",
+      images: [
+        {
+          url: article.image ?? "https://hit-tool.com/fashion-weather/og-image.png?v=1",
+          width: 1200,
+          height: 630,
+          alt: article.title,
+        },
+      ],
+      locale: "ja_JP",
+      type: "article",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${article.title} | 服装ナビ`,
+      description: article.summary,
+      images: [article.image ?? "https://hit-tool.com/fashion-weather/og-image.png?v=1"],
+    },
   };
 }
 
@@ -42,6 +69,16 @@ export default async function ArticleDetailPage({ params }: ArticlePageProps) {
 
   return (
     <main className="mx-auto min-h-screen w-full max-w-lg bg-background pb-10">
+      {/* 構造化データ（Article & BreadcrumbList） */}
+      <ArticleJsonLd
+        title={article.title}
+        description={article.summary}
+        slug={article.slug}
+        image={article.image}
+        datePublished={article.datePublished}
+        dateModified={article.dateModified}
+      />
+
       <header className="sticky top-0 z-40 border-b border-accent-blue/20 bg-card/95 backdrop-blur-sm">
         <div className="flex items-center gap-3 px-4 py-3">
           <Link

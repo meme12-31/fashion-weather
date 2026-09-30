@@ -47,17 +47,29 @@ export default function Home() {
     "@graph": [
       {
         "@type": "WebApplication",
-        name: "今日の服装ナビ",
+        name: "服装ナビ | 天気・気温に合わせたおすすめ服装チェック",
         url: "https://hit-tool.com/fashion-weather",
-        description:
-          "今日の天気や気温に合わせたおすすめの服装をひと目でチェックできるコーディネート提案Webツールです。",
-        applicationCategory: "WeatherApplication",
+        applicationCategory: "UtilityApplication",
         operatingSystem: "All",
-        offers: {
-          "@type": "Offer",
-          price: "0",
-          priceCurrency: "JPY",
-        },
+        description:
+          "リアルタイムの天気や気温に合わせて、今日や明日に最適な服装・コーディネートを提案するWebツールです。",
+      },
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          {
+            "@type": "ListItem",
+            position: 1,
+            name: "HITツールズ",
+            item: "https://hit-tool.com/",
+          },
+          {
+            "@type": "ListItem",
+            position: 2,
+            name: "服装ナビ",
+            item: "https://hit-tool.com/fashion-weather",
+          },
+        ],
       },
     ],
   };

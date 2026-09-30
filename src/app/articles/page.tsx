@@ -6,16 +6,48 @@ import { BackToHomeButton } from "@/components/articles/BackToHomeButton";
 import { getAllArticles } from "@/lib/data/articles";
 
 export const metadata: Metadata = {
-  title: "お役立ちコラム一覧 | 今日の服装ナビ",
+  title: "お役立ちコラム一覧 | 服装ナビ",
   description:
     "天気と服装選びに役立つコラム10本。寒暖差・雨対策・通勤コーデなど、毎日の迷いを減らすヒントをまとめました。",
+  alternates: {
+    canonical: "/fashion-weather/articles",
+  },
 };
 
 export default function ArticlesIndexPage() {
   const articles = getAllArticles();
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          {
+            "@type": "ListItem",
+            position: 1,
+            name: "HITツールズ",
+            item: "https://hit-tool.com/",
+          },
+          {
+            "@type": "ListItem",
+            position: 2,
+            name: "服装ナビ コラム一覧",
+            item: "https://hit-tool.com/fashion-weather/articles",
+          },
+        ],
+      },
+    ],
+  };
+
   return (
     <main className="mx-auto min-h-screen w-full max-w-lg bg-background pb-10">
+      {/* 構造化データ（JSON-LD） */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+
       <header className="sticky top-0 z-40 border-b border-accent-blue/20 bg-card/95 backdrop-blur-sm">
         <div className="flex items-center gap-3 px-4 py-3">
           <Link
