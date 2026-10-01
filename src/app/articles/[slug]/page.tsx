@@ -11,6 +11,7 @@ import {
   getArticleBySlug,
   getArticleSlugs,
 } from "@/lib/data/articles";
+import { SITE_ROBOTS } from "@/lib/constants";
 
 interface ArticlePageProps {
   params: Promise<{ slug: string }>;
@@ -26,12 +27,19 @@ export async function generateMetadata({
   const { slug } = await params;
   const article = getArticleBySlug(slug);
   if (!article) {
-    return { title: "記事が見つかりません | 服装ナビ" };
+    return {
+      title: "記事が見つかりません | 服装ナビ",
+      robots: {
+        index: false,
+        follow: false,
+      },
+    };
   }
   const canonicalPath = `/fashion-weather/articles/${slug}`;
   return {
     title: `${article.title} | 服装ナビ`,
     description: article.summary,
+    robots: SITE_ROBOTS,
     alternates: {
       canonical: canonicalPath,
     },

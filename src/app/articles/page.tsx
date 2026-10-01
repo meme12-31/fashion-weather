@@ -4,11 +4,13 @@ import { ChevronLeft, Shirt } from "lucide-react";
 import { ArticleCard } from "@/components/articles/ArticleCard";
 import { BackToHomeButton } from "@/components/articles/BackToHomeButton";
 import { getAllArticles } from "@/lib/data/articles";
+import { SITE_ROBOTS } from "@/lib/constants";
 
 export const metadata: Metadata = {
   title: "お役立ちコラム一覧 | 服装ナビ",
   description:
     "天気と服装選びに役立つコラム10本。寒暖差・雨対策・通勤コーデなど、毎日の迷いを減らすヒントをまとめました。",
+  robots: SITE_ROBOTS,
   alternates: {
     canonical: "/fashion-weather/articles",
   },

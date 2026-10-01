@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import { LegalPageShell } from "@/components/LegalPageShell";
+import { SITE_ROBOTS } from "@/lib/constants";
 
 export const metadata: Metadata = {
   title: "プライバシーポリシー | 服装×天気",
+  robots: SITE_ROBOTS,
 };
 
 export default function PrivacyPage() {

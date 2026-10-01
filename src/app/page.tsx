@@ -5,12 +5,14 @@ import { FashionWeatherClient } from "@/components/FashionWeatherClient";
 import { RelatedToolsFooter } from "@/components/RelatedToolsFooter";
 import { ArticlesColumnBanner } from "@/components/articles/ArticlesColumnBanner";
 import { getAllArticles } from "@/lib/data/articles";
+import { SITE_ROBOTS } from "@/lib/constants";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://hit-tool.com"),
   title: "今日の服装ナビ｜天気に合わせた服装提案",
   description:
     "今日の天気や気温に合わせたおすすめの服装をひと目でチェック！毎朝の「何を着ていけばいいかわからない」を解決するお手軽コーディネート提案ツールです。",
+  robots: SITE_ROBOTS,
   alternates: {
     canonical: "/fashion-weather",
   },

@@ -29,3 +29,13 @@ export const ADSENSE_CLIENT_ID =
 
 export const ADSENSE_SLOT_ID =
   process.env.NEXT_PUBLIC_ADSENSE_SLOT_ID ?? "";
+
+export const SITE_ROBOTS = {
+  index: true,
+  follow: true,
+  googleBot: {
+    index: true,
+    follow: true,
+  },
+} as const;
+
