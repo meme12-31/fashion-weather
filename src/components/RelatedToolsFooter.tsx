@@ -64,24 +64,24 @@ export const RelatedToolsFooter: React.FC<Props> = ({ currentAppId }) => {
           </h3>
         </div>
 
-        {/* 2×2 グリッド */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* 1列縦並びリスト */}
+        <div className="flex flex-col gap-3.5">
           {relatedTools.map((tool) => (
             <a
               key={tool.id}
               href={tool.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="group p-4 bg-white rounded-xl border border-stone-200 shadow-sm hover:shadow-md hover:-translate-y-0.5 hover:border-amber-400 transition-all duration-200 flex items-start gap-3.5"
+              className="group w-full p-4 bg-white rounded-xl border border-stone-200 shadow-sm hover:shadow-md hover:-translate-y-0.5 hover:border-amber-400 transition-all duration-200 flex items-start gap-3.5"
             >
               <div className="p-2 rounded-lg bg-stone-50 group-hover:bg-amber-50 transition-colors">
                 {tool.icon}
               </div>
               <div className="flex-1 min-w-0">
-                <div className="font-bold text-gray-800 text-sm group-hover:text-amber-700 transition-colors truncate">
+                <div className="font-bold text-gray-800 text-sm group-hover:text-amber-700 transition-colors break-words">
                   {tool.name}
                 </div>
-                <div className="text-xs text-gray-500 mt-1 line-clamp-1">
+                <div className="text-xs text-gray-500 mt-1 break-words">
                   {tool.description}
                 </div>
               </div>
