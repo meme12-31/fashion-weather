@@ -1,5 +1,5 @@
 import React from "react";
-import { Utensils, Calculator, Sun, CheckSquare } from "lucide-react";
+import { Utensils, CookingPot, Calculator, Sun, CheckSquare } from "lucide-react";
 
 interface ToolItem {
   id: string;
@@ -22,7 +22,7 @@ const ALL_TOOLS: ToolItem[] = [
     name: "冷蔵庫レスキュー｜あまり物でズボラ飯",
     url: "https://hit-tool.com/zubora-recipe",
     description: "冷蔵庫に残っている余り物から作れるズボラ飯・簡単レシピを提案するツール",
-    icon: <Utensils className="w-5 h-5 text-amber-500" />,
+    icon: <CookingPot className="w-5 h-5 text-amber-500" />,
   },
   {
     id: "calcnote",
