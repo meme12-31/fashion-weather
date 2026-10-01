@@ -9,7 +9,7 @@ import { SITE_ROBOTS } from "@/lib/constants";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://hit-tool.com"),
-  title: "今日の服装ナビ｜天気に合わせた服装提案",
+  title: "今日の服装ナビ | 天気に合わせた服装提案",
   description:
     "今日の天気や気温に合わせたおすすめの服装をひと目でチェック！毎朝の「何を着ればいい？」を解決するコーデ提案ツールです。忙しい朝の服装選びや季節ごとのコーデに迷ったときにも便利。無料・登録不要で使えます。",
   robots: SITE_ROBOTS,
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     canonical: "/fashion-weather",
   },
   openGraph: {
-    title: "今日の服装ナビ｜天気に合わせた服装提案",
+    title: "今日の服装ナビ | 天気に合わせた服装提案",
     description:
       "今日の天気や気温に合わせたおすすめの服装をひと目でチェック！毎朝の「何を着ればいい？」を解決するコーデ提案ツールです。忙しい朝の服装選びや季節ごとのコーデに迷ったときにも便利。無料・登録不要で使えます。",
     url: "https://hit-tool.com/fashion-weather",
@@ -35,7 +35,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "今日の服装ナビ｜天気に合わせた服装提案",
+    title: "今日の服装ナビ | 天気に合わせた服装提案",
     description:
       "今日の天気や気温に合わせたおすすめの服装をひと目でチェック！毎朝の「何を着ればいい？」を解決するコーデ提案ツールです。忙しい朝の服装選びや季節ごとのコーデに迷ったときにも便利。無料・登録不要で使えます。",
     images: ["https://hit-tool.com/fashion-weather/og-image.png?v=1"],
