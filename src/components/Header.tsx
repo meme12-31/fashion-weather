@@ -20,10 +20,10 @@ export function Header({ location, onChangeLocation }: HeaderProps) {
                 今日の服装ナビ
                 <span className="sr-only">｜天気に合わせた服装提案</span>
               </h1>
-              <p className="flex items-center gap-1 truncate text-xs text-muted">
+              <div className="flex items-center gap-1 truncate text-xs text-muted">
                 <MapPin className="h-3 w-3 shrink-0" />
                 <span className="truncate">{location.name}</span>
-              </p>
+              </div>
             </div>
           </div>
         </div>

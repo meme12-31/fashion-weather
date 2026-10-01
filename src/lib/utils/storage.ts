@@ -58,6 +58,37 @@ function parseSettings(raw: string): UserSetting {
   }
 }
 
+let cachedRaw: string | null = null;
+let cachedSettings: UserSetting = DEFAULT_SETTINGS;
+
+export function getSettingsSnapshot(): UserSetting {
+  if (typeof window === "undefined") return DEFAULT_SETTINGS;
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY) ?? "";
+    if (raw !== cachedRaw) {
+      cachedRaw = raw;
+      cachedSettings = raw ? parseSettings(raw) : DEFAULT_SETTINGS;
+    }
+    return cachedSettings;
+  } catch {
+    return DEFAULT_SETTINGS;
+  }
+}
+
+export function getServerSettingsSnapshot(): UserSetting {
+  return DEFAULT_SETTINGS;
+}
+
+export function subscribeSettings(callback: () => void): () => void {
+  if (typeof window === "undefined") return () => {};
+  window.addEventListener("storage", callback);
+  window.addEventListener("fuku-navi-settings-change", callback);
+  return () => {
+    window.removeEventListener("storage", callback);
+    window.removeEventListener("fuku-navi-settings-change", callback);
+  };
+}
+
 export function loadSettings(): UserSetting {
   if (typeof window === "undefined") {
     return DEFAULT_SETTINGS;
@@ -77,6 +108,7 @@ export function saveSettings(settings: UserSetting): void {
 
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
+    window.dispatchEvent(new Event("fuku-navi-settings-change"));
   } catch {
     // LocalStorage unavailable or quota exceeded — silently ignore
   }

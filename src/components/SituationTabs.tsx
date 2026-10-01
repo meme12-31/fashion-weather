@@ -9,7 +9,7 @@ interface SituationTabsProps {
 export function SituationTabs({ selected, onChange }: SituationTabsProps) {
   return (
     <div className="mx-4 mt-4">
-      <p className="mb-2 text-xs font-semibold text-muted">シチュエーション</p>
+      <div className="mb-2 text-xs font-semibold text-muted">シチュエーション</div>
       <div className="flex flex-wrap gap-2">
         {SITUATIONS.map((item) => {
           const isActive = selected === item.id;

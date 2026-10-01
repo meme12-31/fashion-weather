@@ -28,13 +28,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="ja"
       className={`${geistSans.variable} ${geistMono.variable} h-full scroll-smooth antialiased`}
     >
-      <head>
+      <body className="min-h-full flex flex-col">
         <Script
-          async
           src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
-          strategy="beforeInteractive"
+          strategy="afterInteractive"
         />
-        <Script id="google-analytics" strategy="beforeInteractive">
+        <Script id="google-analytics" strategy="afterInteractive">
           {`
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
@@ -42,8 +41,6 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             gtag('config', '${GA_MEASUREMENT_ID}');
           `}
         </Script>
-      </head>
-      <body className="min-h-full flex flex-col">
         {ADSENSE_CLIENT_ID ? (
           <Script
             async

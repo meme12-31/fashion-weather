@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { AdBanner } from "@/components/AdBanner";
 import { FashionWeatherClient } from "@/components/FashionWeatherClient";
+import { RelatedToolsFooter } from "@/components/RelatedToolsFooter";
 import { ArticlesColumnBanner } from "@/components/articles/ArticlesColumnBanner";
 import { getAllArticles } from "@/lib/data/articles";
 
@@ -108,6 +109,8 @@ export default function Home() {
           ))}
         </ul>
       </section>
+
+      <RelatedToolsFooter currentAppId="fashion-weather" />
     </main>
   );
 }

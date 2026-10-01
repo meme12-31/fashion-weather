@@ -424,10 +424,10 @@ function LocationModalForm({
 
       {favoriteLocations.length > 0 && (
         <div className="mb-4">
-          <p className="mb-2 flex items-center gap-1 text-xs font-semibold text-muted">
+          <div className="mb-2 flex items-center gap-1 text-xs font-semibold text-muted">
             <Star className="h-3 w-3" />
             お気に入り地域
-          </p>
+          </div>
           <div className="flex flex-wrap gap-2">
             {favoriteLocations.map((fav) => (
               <button

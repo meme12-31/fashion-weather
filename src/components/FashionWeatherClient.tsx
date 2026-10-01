@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { RefreshCw } from "lucide-react";
 import { Header } from "./Header";
 import { LoadingSpinner } from "./LoadingSpinner";
@@ -23,8 +23,10 @@ import {
 } from "@/lib/utils/outfitLogic";
 import {
   addFavoriteLocation,
-  loadSettings,
+  getServerSettingsSnapshot,
+  getSettingsSnapshot,
   removeFavoriteLocation,
+  subscribeSettings,
   updateLocation,
   updateSituation,
 } from "@/lib/utils/storage";
@@ -35,26 +37,23 @@ type GeolocationStatus = "pending" | "granted" | "denied" | "unsupported";
 const GEO_INIT_TIMEOUT_MS = 12000;
 
 export function FashionWeatherClient() {
-  const [location, setLocation] = useState<Location>(
-    () => loadSettings().selectedLocation,
+  const settings = useSyncExternalStore(
+    subscribeSettings,
+    getSettingsSnapshot,
+    getServerSettingsSnapshot,
   );
-  const [situation, setSituation] = useState<Situation>(
-    () => loadSettings().selectedSituation,
-  );
-  const [favoriteLocations, setFavoriteLocations] = useState<Location[]>(
-    () => loadSettings().favoriteLocations ?? [],
-  );
+
+  const [activeLocation, setActiveLocation] = useState<Location | null>(null);
   const [weather, setWeather] = useState<WeatherData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [geoStatus, setGeoStatus] = useState<GeolocationStatus>(() => {
-    if (typeof navigator === "undefined" || !navigator.geolocation) {
-      return "unsupported";
-    }
-    return "pending";
-  });
+  const [geoStatus, setGeoStatus] = useState<GeolocationStatus>("pending");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLocationBannerVisible, setIsLocationBannerVisible] = useState(true);
+
+  const situation = settings.selectedSituation;
+  const favoriteLocations = settings.favoriteLocations ?? [];
+  const currentLocation = activeLocation ?? settings.selectedLocation ?? DEFAULT_LOCATION;
 
   const loadWeather = useCallback(async (loc: Location) => {
     setIsLoading(true);
@@ -79,6 +78,7 @@ export function FashionWeatherClient() {
 
   useEffect(() => {
     let cancelled = false;
+    const initialLocation = settings.selectedLocation ?? DEFAULT_LOCATION;
 
     const fetchForLocation = async (loc: Location) => {
       if (cancelled || weatherFetchStartedRef.current) return;
@@ -86,16 +86,17 @@ export function FashionWeatherClient() {
       await loadWeather(loc);
     };
 
-    const savedLocation = loadSettings().selectedLocation ?? DEFAULT_LOCATION;
-
     const fallbackTimer = window.setTimeout(() => {
       if (cancelled || weatherFetchStartedRef.current) return;
       setGeoStatus((prev) => (prev === "pending" ? "denied" : prev));
-      void fetchForLocation(savedLocation);
+      void fetchForLocation(initialLocation);
     }, GEO_INIT_TIMEOUT_MS);
 
-    if (!navigator.geolocation) {
-      void fetchForLocation(savedLocation);
+    if (typeof navigator === "undefined" || !navigator.geolocation) {
+      queueMicrotask(() => {
+        if (!cancelled) setGeoStatus("unsupported");
+      });
+      void fetchForLocation(initialLocation);
       return () => {
         cancelled = true;
         clearTimeout(fallbackTimer);
@@ -118,18 +119,18 @@ export function FashionWeatherClient() {
             lat: position.coords.latitude,
             lon: position.coords.longitude,
           };
-          setLocation(geoLocation);
+          setActiveLocation(geoLocation);
           updateLocation(geoLocation);
           await fetchForLocation(geoLocation);
         } catch {
-          await fetchForLocation(savedLocation);
+          await fetchForLocation(initialLocation);
         }
       },
       () => {
         if (cancelled) return;
         clearTimeout(fallbackTimer);
         setGeoStatus("denied");
-        void fetchForLocation(savedLocation);
+        void fetchForLocation(initialLocation);
       },
       { timeout: 10000, maximumAge: 300000 },
     );
@@ -139,31 +140,28 @@ export function FashionWeatherClient() {
       clearTimeout(fallbackTimer);
       weatherFetchStartedRef.current = false;
     };
-  }, [loadWeather]);
+  }, [loadWeather, settings.selectedLocation]);
 
   const handleSituationChange = (newSituation: Situation) => {
-    setSituation(newSituation);
     updateSituation(newSituation);
   };
 
   const handleLocationSelect = (newLocation: Location) => {
-    setLocation(newLocation);
+    setActiveLocation(newLocation);
     updateLocation(newLocation);
     void loadWeather(newLocation);
   };
 
   const handleAddFavorite = (loc: Location) => {
-    const updated = addFavoriteLocation(loc);
-    setFavoriteLocations(updated.favoriteLocations ?? []);
+    addFavoriteLocation(loc);
   };
 
   const handleRemoveFavorite = (loc: Location) => {
-    const updated = removeFavoriteLocation(loc);
-    setFavoriteLocations(updated.favoriteLocations ?? []);
+    removeFavoriteLocation(loc);
   };
 
   const handleRetry = () => {
-    void loadWeather(location);
+    void loadWeather(currentLocation);
   };
 
   const showLocationNotice =
@@ -179,7 +177,7 @@ export function FashionWeatherClient() {
   return (
     <div id="page-top" className="scroll-mt-0">
       <Header
-        location={location}
+        location={currentLocation}
         onChangeLocation={() => setIsModalOpen(true)}
       />
 
@@ -225,7 +223,7 @@ export function FashionWeatherClient() {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onSelect={handleLocationSelect}
-        currentLocation={location}
+        currentLocation={currentLocation}
         favoriteLocations={favoriteLocations}
         onAddFavorite={handleAddFavorite}
         onRemoveFavorite={handleRemoveFavorite}
