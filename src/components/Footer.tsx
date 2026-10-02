@@ -1,9 +1,9 @@
 import Link from "next/link";
 
 const FOOTER_LINKS = [
-  { href: "/operator", label: "運営者情報" },
-  { href: "/privacy", label: "プライバシーポリシー" },
-  { href: "/contact", label: "お問い合わせ" },
+  { href: "https://hit-tool.com/about", label: "運営者情報" },
+  { href: "https://hit-tool.com/privacy", label: "プライバシーポリシー" },
+  { href: "https://hit-tool.com/contact", label: "お問い合わせ" },
 ] as const;
 
 export function Footer() {

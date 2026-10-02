@@ -30,6 +30,9 @@ export function ArticlesColumnBanner({
           <h2 className="block text-sm font-bold leading-snug text-foreground">
             お役立ちコラム一覧を見る
           </h2>
+          <p className="mt-0.5 text-xs text-muted-foreground">
+            毎朝の「何を着ればいい？」をサポートします。
+          </p>
         </span>
         <ChevronRight
           className="h-5 w-5 shrink-0 text-accent-blue transition-transform group-hover:translate-x-0.5"
